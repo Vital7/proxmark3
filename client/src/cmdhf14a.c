@@ -756,18 +756,19 @@ int CmdHF14ASim(const char *Cmd) {
     CLIParserInit(&ctx, "hf 14a sim",
                   "Simulate ISO/IEC 14443 type A tag with 4,7 or 10 byte UID\n"
                   "Use type 7 for Mifare Ultralight EV1, Amiibo (NTAG215 pack 0x8080)",
-                  "hf 14a sim -t 1 --uid 11223344  -> MIFARE Classic 1k\n"
-                  "hf 14a sim -t 2                 -> MIFARE Ultralight\n"
-                  "hf 14a sim -t 3                 -> MIFARE Desfire\n"
-                  "hf 14a sim -t 4                 -> ISO/IEC 14443-4\n"
-                  "hf 14a sim -t 5                 -> MIFARE Tnp3xxx\n"
-                  "hf 14a sim -t 6                 -> MIFARE Mini\n"
-                  "hf 14a sim -t 7                 -> MFU EV1 / NTAG 215 Amiibo\n"
-                  "hf 14a sim -t 8                 -> MIFARE Classic 4k\n"
-                  "hf 14a sim -t 9                 -> FM11RF005SH Shanghai Metro\n"
-                  "hf 14a sim -t 10                -> ST25TA IKEA Rothult\n"
-                  "hf 14a sim -t 11                -> Javacard (JCOP)\n"
-                  "hf 14a sim -t 12                -> 4K Seos card\n"
+                  "hf 14a sim -t 1 --uid 11223344   -> MIFARE Classic 1k\n"
+                  "hf 14a sim -t 2                  -> MIFARE Ultralight\n"
+                  "hf 14a sim -t 3                  -> MIFARE Desfire\n"
+                  "hf 14a sim -t 4                  -> ISO/IEC 14443-4\n"
+                  "hf 14a sim -t 5                  -> MIFARE Tnp3xxx\n"
+                  "hf 14a sim -t 6                  -> MIFARE Mini\n"
+                  "hf 14a sim -t 7                  -> MFU EV1 / NTAG 215 Amiibo\n"
+                  "hf 14a sim -t 8                  -> MIFARE Classic 4k\n"
+                  "hf 14a sim -t 9                  -> FM11RF005SH Shanghai Metro\n"
+                  "hf 14a sim -t 10                 -> ST25TA IKEA Rothult\n"
+                  "hf 14a sim -t 11                 -> Javacard (JCOP)\n"
+                  "hf 14a sim -t 12                 -> 4K Seos card\n"
+                  "hf 14a sim -t 13 --data 01020304 -> MagSafe case\n"
                  );
 
     void *argtable[] = {
@@ -778,6 +779,7 @@ int CmdHF14ASim(const char *Cmd) {
         arg_lit0("x",  NULL, "Performs the 'reader attack', nr/ar attack against a reader"),
         arg_lit0(NULL, "sk", "Fill simulator keys from found keys"),
         arg_lit0("v", "verbose", "verbose output"),
+        arg_str0("d", "data", "<hex>", "6-byte MagSafe payload"),
         arg_param_end
     };
     CLIExecWithReturn(ctx, Cmd, argtable, false);
@@ -787,6 +789,10 @@ int CmdHF14ASim(const char *Cmd) {
     int uid_len = 0;
     uint8_t uid[10] = {0};
     CLIGetHexWithReturn(ctx, 2, uid, &uid_len);
+
+    int magsafe_data_len = 0;
+    uint8_t magsafe_data[4] = {0};
+    CLIGetHexWithReturn(ctx, 7, magsafe_data, &magsafe_data_len);
 
     uint16_t flags = 0;
     bool useUIDfromEML = true;
@@ -836,12 +842,14 @@ int CmdHF14ASim(const char *Cmd) {
         uint16_t flags;
         uint8_t uid[10];
         uint8_t exitAfter;
+        uint8_t magsafe_data[4];
     } PACKED payload;
 
     payload.tagtype = tagtype;
     payload.flags = flags;
     payload.exitAfter = exitAfterNReads;
     memcpy(payload.uid, uid, uid_len);
+    memcpy(payload.magsafe_data, magsafe_data, magsafe_data_len);
 
     clearCommandBuffer();
     SendCommandNG(CMD_HF_ISO14443A_SIMULATE, (uint8_t *)&payload, sizeof(payload));

@@ -105,7 +105,11 @@ typedef enum {
     RESP_INDEX_VERSION,
     RESP_INDEX_SIGNATURE,
     RESP_INDEX_PPS,
-    RESP_INDEX_PACK,
+    RESP_INDEX_PACK,,
+    RESP_INDEX_MAGSAFE1,
+    RESP_INDEX_MAGSAFE2,
+    RESP_INDEX_MAGSAFE3,
+    RESP_INDEX_MAGSAFE4
 } resp_index_t;
 
 #ifndef AddCrc14A
@@ -138,8 +142,8 @@ RAMFUNC bool MillerDecoding(uint8_t bit, uint32_t non_real_time);
 RAMFUNC int ManchesterDecoding(uint8_t bit, uint16_t offset, uint32_t non_real_time);
 
 void RAMFUNC SniffIso14443a(uint8_t param);
-void SimulateIso14443aTag(uint8_t tagType, uint16_t flags, uint8_t *data, uint8_t exitAfterNReads);
-bool SimulateIso14443aInit(uint8_t tagType, uint16_t flags, uint8_t *data, tag_response_info_t **responses, uint32_t *cuid, uint32_t counters[3], uint8_t tearings[3], uint8_t *pages);
+void SimulateIso14443aTag(uint8_t tagType, uint16_t flags, uint8_t *data, uint8_t exitAfterNReads, uint8_t *magsafeData);
+bool SimulateIso14443aInit(uint8_t tagType, uint16_t flags, uint8_t *data, tag_response_info_t **responses, uint32_t *cuid, uint32_t counters[3], uint8_t tearings[3], uint8_t *pages, uint8_t *magsafeData);
 bool GetIso14443aCommandFromReader(uint8_t *received, uint8_t *par, int *len);
 void iso14443a_antifuzz(uint32_t flags);
 void ReaderIso14443a(PacketCommandNG *c);
