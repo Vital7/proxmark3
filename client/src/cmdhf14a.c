@@ -779,7 +779,7 @@ int CmdHF14ASim(const char *Cmd) {
         arg_lit0("x",  NULL, "Performs the 'reader attack', nr/ar attack against a reader"),
         arg_lit0(NULL, "sk", "Fill simulator keys from found keys"),
         arg_lit0("v", "verbose", "verbose output"),
-        arg_str0("d", "data", "<hex>", "6-byte MagSafe payload"),
+        arg_str0("d", "data", "<hex>", "4-byte MagSafe payload"),
         arg_param_end
     };
     CLIExecWithReturn(ctx, Cmd, argtable, false);
