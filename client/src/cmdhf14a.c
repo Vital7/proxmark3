@@ -828,7 +828,7 @@ int CmdHF14ASim(const char *Cmd) {
 
     CLIParserFree(ctx);
 
-    if (tagtype > 12) {
+    if (tagtype > 13) {
         PrintAndLogEx(ERR, "Undefined tag %d", tagtype);
         return PM3_EINVARG;
     }
